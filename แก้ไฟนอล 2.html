@@ -10,23 +10,28 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: 'Prompt', sans-serif;
-            background: #f4f4f4;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0; padding: 15px;
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; color: #333;
         }
         .container {
             background: white; padding: 20px; border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 500px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2); width: 100%; max-width: 500px;
             text-align: center; border-top: 5px solid #FFD700;
         }
         h1 { color: #4A148C; margin: 0 0 10px 0; font-size: 1.5rem; line-height: 1.3; }
+        h3 { color: #666; margin: 15px 0 10px 0; }
         
         /* ฟอร์มและปุ่ม */
         input, select {
             width: 100%; padding: 12px; font-size: 1rem;
             border: 2px solid #ddd; border-radius: 8px; margin-bottom: 15px;
             text-align: center; font-family: 'Prompt', sans-serif; background: #fff;
+            color: #333;
+        }
+        input:focus, select:focus {
+            outline: none; border-color: #667eea; box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
         }
         .btn {
             width: 100%; padding: 15px; border: none; border-radius: 10px;
@@ -34,46 +39,60 @@
             font-family: 'Prompt', sans-serif; color: #4e3b00; background: #FFD700;
             box-shadow: 0 3px 0 #cfaf00; transition: transform 0.1s;
         }
-        .btn:active { transform: translateY(3px); box-shadow: none; }
+        .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #cfaf00; }
+        .btn:hover { background: #ffd700; }
         .btn-green { background: #66bb6a; color: white; box-shadow: 0 3px 0 #43a047; }
+        .btn-green:active { box-shadow: 0 1px 0 #43a047; }
         .btn-red { background: #ef5350; color: white; box-shadow: 0 3px 0 #c62828; }
+        .btn-red:active { box-shadow: 0 1px 0 #c62828; }
 
         /* หน้าจอเกม */
         .hidden { display: none !important; }
         .game-bar {
-            display: flex; justify-content: space-between; background: #eee;
-            padding: 10px; border-radius: 8px; margin-bottom: 20px; font-weight: bold;
+            display: flex; justify-content: space-between; background: linear-gradient(to right, #667eea, #764ba2);
+            padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold;
+            color: white; font-size: 1rem;
         }
+        .game-bar span { display: flex; align-items: center; gap: 5px; }
         .word-box {
-            font-size: 1.8rem; color: #4A148C; font-weight: bold; margin: 20px 0;
-            min-height: 50px; line-height: 1.2;
+            font-size: 2rem; color: #4A148C; font-weight: bold; margin: 20px 0;
+            min-height: 60px; line-height: 1.3; word-wrap: break-word;
         }
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .option-btn {
-            background: white; border: 2px solid #e0e0e0; padding: 10px;
-            border-radius: 10px; font-size: 1rem; min-height: 70px;
+            background: #f5f5f5; border: 2px solid #e0e0e0; padding: 12px;
+            border-radius: 10px; font-size: 0.95rem; min-height: 75px;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; user-select: none;
+            cursor: pointer; user-select: none; transition: all 0.2s;
+            text-align: center; word-wrap: break-word;
         }
-        .option-btn:active { background: #f0f0f0; }
+        .option-btn:hover { background: #efefef; border-color: #bdbdbd; }
+        .option-btn:active { transform: scale(0.98); }
+        .option-btn.disabled { cursor: not-allowed; opacity: 0.6; }
         .correct { background: #66bb6a !important; color: white !important; border-color: #66bb6a !important; }
         .wrong { background: #ef5350 !important; color: white !important; border-color: #ef5350 !important; }
         
         /* ตาราง */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-        td, th { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
+        td, th { padding: 10px; border-bottom: 1px solid #eee; text-align: center; }
+        td:first-child, th:first-child { text-align: left; }
+        
+        /* ข้อมูลเพิ่มเติม */
+        .info-box { background: #f0f0f0; padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9rem; color: #666; }
+        .medal { font-size: 1.3rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- หน้าจอเริ่มต้น -->
     <div id="start-screen">
-        <div style="font-size: 40px;">🏯</div>
+        <div style="font-size: 48px; margin-bottom: 10px;">🏯</div>
         <h1>เกิดใหม่อีกที<br>ก็เป็นชาววังไปซะแล้ว</h1>
         
-        <input type="text" id="username" placeholder="ตั้งชื่อเล่น..." maxlength="12">
+        <input type="text" id="username" placeholder="ตั้งชื่อเล่น..." maxlength="20">
         
-        <div style="text-align: left; font-size: 0.9rem; color:#666; margin-bottom: 5px;">ความยาก:</div>
+        <h3>เลือกความยาก:</h3>
         <select id="difficulty-select">
             <option value="mix">🔀 รวมมิตร (สุ่มทั้งหมด)</option>
             <option value="easy">🟢 ระดับง่าย</option>
@@ -81,34 +100,56 @@
             <option value="hard">🔴 ระดับยาก</option>
         </select>
         
-        <p style="margin: 10px 0;">เลือกเวลาเพื่อเริ่มเกม:</p>
+        <h3>เลือกเวลา:</h3>
         <button class="btn" onclick="tryStartGame(20)">⏱️ 20 วินาที</button>
         <button class="btn" onclick="tryStartGame(40)">⏱️ 40 วินาที</button>
         <button class="btn" onclick="tryStartGame(60)">⏱️ 60 วินาที</button>
+        
+        <div class="info-box">
+            💡 เฉลยคำศัพท์ราชาศัพท์ที่เกี่ยวกับพระมหากษัตริย์<br>
+            คำถูก +10 คะแนน | คำผิด -5 คะแนน
+        </div>
     </div>
 
+    <!-- หน้าจอเกม -->
     <div id="game-screen" class="hidden">
         <div class="game-bar">
-            <span>คะแนน: <span id="score">0</span></span>
-            <span style="color:red;">เวลา: <span id="timer">0</span></span>
+            <span>📊 คะแนน: <strong id="score">0</strong></span>
+            <span>⏱️ เวลา: <strong id="timer" style="color:#FFD700;">0</strong></span>
         </div>
-        <div style="color:#888; font-size:0.9rem;">คำสามัญ:</div>
+        
+        <div style="color:#888; font-size:0.9rem; margin-bottom:10px;">คำสามัญ:</div>
         <div class="word-box" id="question-text">...</div>
+        
+        <div style="color:#666; font-size:0.85rem; margin-bottom:10px;">เลือกคำราชาศัพท์ที่ถูกต้อง:</div>
         <div class="options-grid" id="options-area"></div>
     </div>
 
+    <!-- หน้าจอจบเกม -->
     <div id="end-screen" class="hidden">
+        <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
         <h1>จบเกม!</h1>
-        <div style="margin-bottom:10px;">ยศ: <span id="final-rank" style="font-weight:bold; color:#4A148C;">-</span></div>
-        <div><span id="final-name"></span></div>
-        <h2 style="font-size: 3rem; margin: 10px 0;" id="final-score">0</h2>
         
-        <button class="btn btn-green" onclick="location.reload()">เล่นใหม่</button>
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <div style="margin-bottom:10px; font-size:0.9rem;">
+                <strong>ชื่อผู้เล่น:</strong> <span id="final-name">-</span>
+            </div>
+            <div style="margin-bottom:10px; font-size:0.9rem;">
+                <strong>ยศ:</strong> <span id="final-rank" style="color:#4A148C; font-weight:bold;">-</span>
+            </div>
+            <div style="font-size: 2.5rem; color: #FFD700; font-weight:bold; margin: 10px 0;">
+                <span id="final-score">0</span> 🎖️
+            </div>
+        </div>
         
-        <div style="margin-top:20px; border-top:1px solid #ddd; padding-top:10px;">
+        <button class="btn btn-green" onclick="location.reload()">🔄 เล่นใหม่</button>
+        
+        <div style="margin-top:20px; border-top:2px solid #ddd; padding-top:15px;">
             <h3>🏆 อันดับคะแนน</h3>
             <table id="leaderboard-table"></table>
-            <button class="btn btn-red" onclick="clearScore()" style="margin-top:10px; font-size:0.9rem; padding:10px;">ล้างสถิติ</button>
+            <button class="btn btn-red" onclick="clearScore()" style="margin-top:10px; font-size:0.9rem; padding:10px;">
+                🗑️ ล้างสถิติ
+            </button>
         </div>
     </div>
 </div>
@@ -116,58 +157,135 @@
 <script>
     // --- 1. ข้อมูลคำศัพท์ (แยกหมวด) ---
     var wordsEasy = [
-        { q: "ไป", a: "เสด็จฯ" }, { q: "กิน", a: "เสวย" }, { q: "นอน", a: "บรรทม" }, { q: "นั่ง / อยู่", a: "ประทับ" },
-        { q: "พูด", a: "ตรัส" }, { q: "คำนำหน้ากริยา", a: "ทรง" }, { q: "ชอบ / พอใจ", a: "โปรด" }, { q: "โกรธ", a: "กริ้ว" },
-        { q: "ให้ (ของ)", a: "พระราชทาน" }, { q: "มอบให้ (แก่เจ้า)", a: "ถวาย" }, { q: "เกิด", a: "ประสูติ" },
-        { q: "ตาย (กษัตริย์)", a: "สวรรคต" }, { q: "ตาย (เจ้านาย)", a: "สิ้นพระชนม์" }, { q: "บวช", a: "ผนวช" },
-        { q: "ทำงาน", a: "ทรงงาน" }, { q: "ฟังเทศน์", a: "ทรงธรรม" }, { q: "ขี่ม้า", a: "ทรงม้า" },
-        { q: "ดู / มอง", a: "ทอดพระเนตร" }, { q: "หัว", a: "พระเศียร" }, { q: "หน้า", a: "พระพักตร์" },
-        { q: "ตา", a: "พระเนตร" }, { q: "ปาก", a: "พระโอษฐ์" }, { q: "มือ", a: "พระหัตถ์" }, { q: "เท้า", a: "พระบาท" },
-        { q: "ใจ", a: "พระทัย" }, { q: "ท้อง", a: "พระนาภี" }, { q: "เลือด", a: "พระโลหิต" }, { q: "คอ", a: "พระศอ" },
-        { q: "ในหลวง", a: "พระเจ้าอยู่หัว" }, { q: "ราชินี", a: "พระราชินี" }, { q: "พ่อ", a: "พระบิดา" },
-        { q: "แม่", a: "พระมารดา" }, { q: "ลูกชาย", a: "พระโอรส" }, { q: "ลูกสาว", a: "พระธิดา" },
-        { q: "เมีย", a: "พระชายา" }, { q: "ผัว", a: "พระสวามี" }, { q: "พี่ชาย", a: "พระเชษฐา" },
-        { q: "น้องชาย", a: "พระอนุชา" }, { q: "ไหว้", a: "ถวายบังคม" }, { q: "ป่วย (พระ)", a: "อาพาธ" },
-        { q: "ตาย (พระ)", a: "มรณภาพ" }, { q: "กิน (พระ)", a: "ฉัน" }, { q: "นอน (พระ)", a: "จำวัด" }, { q: "อาบน้ำ (พระ)", a: "สรงน้ำ" }
+        { q: "ไป", a: "เสด็จฯ" },
+        { q: "กิน", a: "เสวย" },
+        { q: "นอน", a: "บรรทม" },
+        { q: "นั่ง / อยู่", a: "ประทับ" },
+        { q: "พูด", a: "ตรัส" },
+        { q: "คำนำหน้ากริยา", a: "ทรง" },
+        { q: "ชอบ / พอใจ", a: "โปรด" },
+        { q: "โกรธ", a: "กริ้ว" },
+        { q: "ให้ (ของ)", a: "พระราชทาน" },
+        { q: "มอบให้ (แก่เจ้า)", a: "ถวาย" },
+        { q: "เกิด", a: "ประสูติ" },
+        { q: "ตาย (กษัตริย์)", a: "สวรรคต" },
+        { q: "ตาย (เจ้านาย)", a: "สิ้นพระชนม์" },
+        { q: "บวช", a: "ผนวช" },
+        { q: "ทำงาน", a: "ทรงงาน" },
+        { q: "ฟังเทศน์", a: "ทรงธรรม" },
+        { q: "ขี่ม้า", a: "ทรงม้า" },
+        { q: "ดู / มอง", a: "ทอดพระเนตร" },
+        { q: "หัว", a: "พระเศียร" },
+        { q: "หน้า", a: "พระพักตร์" },
+        { q: "ตา", a: "พระเนตร" },
+        { q: "ปาก", a: "พระโอษฐ์" },
+        { q: "มือ", a: "พระหัตถ์" },
+        { q: "เท้า", a: "พระบาท" },
+        { q: "ใจ", a: "พระทัย" },
+        { q: "ท้อง", a: "พระนาภี" },
+        { q: "เลือด", a: "พระโลหิต" },
+        { q: "คอ", a: "พระศอ" },
+        { q: "ในหลวง", a: "พระเจ้าอยู่หัว" },
+        { q: "ราชินี", a: "พระราชินี" },
+        { q: "พ่อ", a: "พระบิดา" },
+        { q: "แม่", a: "พระมารดา" },
+        { q: "ลูกชาย", a: "พระโอรส" },
+        { q: "ลูกสาว", a: "พระธิดา" },
+        { q: "เมีย", a: "พระชายา" },
+        { q: "ผัว", a: "พระสวามี" },
+        { q: "พี่ชาย", a: "พระเชษฐา" },
+        { q: "น้องชาย", a: "พระอนุชา" },
+        { q: "ไหว้", a: "ถวายบังคม" },
+        { q: "ป่วย (พระ)", a: "อาพาธ" }
     ];
     
     var wordsMedium = [
-        { q: "ผม", a: "พระเกศา" }, { q: "หน้าผาก", a: "พระนลาฏ" }, { q: "คิ้ว", a: "พระขนง" }, { q: "จมูก", a: "พระนาสิก" },
-        { q: "แก้ม", a: "พระปราง" }, { q: "ฟัน", a: "พระทนต์" }, { q: "หู", a: "พระกรรณ" }, { q: "หนวด", a: "พระมัสสุ" },
-        { q: "หน้าอก", a: "พระอุระ" }, { q: "อก", a: "พระทรวง" }, { q: "หัวใจ", a: "พระหทัย" }, { q: "ตัก / ขา", a: "พระเพลา" },
-        { q: "หัวเข่า", a: "พระชานุ" }, { q: "เหงื่อ", a: "พระเสโท" }, { q: "ปู่ / ตา", a: "พระอัยกา" },
-        { q: "ย่า / ยาย", a: "พระอัยยิกา" }, { q: "ลุง / อา (ชาย)", a: "พระปิตุลา" }, { q: "ป้า / อา (หญิง)", a: "พระปิตุจฉา" },
-        { q: "น้า (ชาย)", a: "พระมาตุลา" }, { q: "น้า (หญิง)", a: "พระมาตุจฉา" }, { q: "น้องสาว", a: "พระขนิษฐา" },
-        { q: "หลาน", a: "พระราชนัดดา" }, { q: "ภรรยาเอก", a: "พระมเหสี" }, { q: "ภรรยารอง", a: "พระสนม" },
-        { q: "เสื้อผ้า", a: "ฉลองพระองค์" }, { q: "แว่นตา", a: "ฉลองพระเนตร" }, { q: "รองเท้า", a: "ฉลองพระบาท" },
-        { q: "เตียง", a: "พระแท่น" }, { q: "ที่นั่ง", a: "พระราชอาสน์" }, { q: "รูปถ่าย", a: "พระบรมฉายาลักษณ์" },
-        { q: "บ้าน", a: "พระตำหนัก" }, { q: "เงิน", a: "พระราชทรัพย์" }, { q: "ป่วย", a: "ทรงพระประชวร" },
-        { q: "หัวเราะ", a: "ทรงพระสรวล" }, { q: "เขียน/อ่าน", a: "ทรงพระอักษร" }, { q: "แต่งหนังสือ/เพลง", a: "ทรงพระราชนิพนธ์" },
-        { q: "คำสอน", a: "พระบรมราโชวาท" }, { q: "ทักทาย", a: "พระราชปฏิสันถาร" }, { q: "คำสั่งสูงสุด", a: "พระบรมราชโองการ" },
-        { q: "ชื่อ (เซ็นชื่อ)", a: "พระปรมาภิไธย" }, { q: "บุญ", a: "พระราชกุศล" }
+        { q: "ผม", a: "พระเกศา" },
+        { q: "หน้าผาก", a: "พระนลาฏ" },
+        { q: "คิ้ว", a: "พระขนง" },
+        { q: "จมูก", a: "พระนาสิกา" },
+        { q: "แก้ม", a: "พระปราง" },
+        { q: "ฟัน", a: "พระทนต์" },
+        { q: "หู", a: "พระกรรณ" },
+        { q: "หนวด", a: "พระมัสสนา" },
+        { q: "หน้าอก", a: "พระอุระ" },
+        { q: "อก", a: "พระทรวง" },
+        { q: "หัวใจ", a: "พระหทัย" },
+        { q: "ตัก / ขา", a: "พระจังคะ" },
+        { q: "หัวเข่า", a: "พระชานุ" },
+        { q: "เหงื่อ", a: "พระเสโท" },
+        { q: "ปู่ / ตา", a: "พระอัยกา" },
+        { q: "ย่า / ยาย", a: "พระอัยยิกา" },
+        { q: "ลุง / อา (ชาย)", a: "พระปิตุลา" },
+        { q: "ป้า / อา (หญิง)", a: "พระปิตุจฉา" },
+        { q: "น้า (ชาย)", a: "พระมาตุลา" },
+        { q: "น้า (หญิง)", a: "พระมาตุจฉา" },
+        { q: "น้องสาว", a: "พระขนิ-พัน" },
+        { q: "หลาน", a: "พระราชนัดดา" },
+        { q: "ภรรยาเอก", a: "พระมเหสี" },
+        { q: "ภรรยารอง", a: "พระสนม" },
+        { q: "เสื้อผ้า", a: "ฉลองพระองค์" },
+        { q: "แว่นตา", a: "ฉลองพระเนตร" },
+        { q: "รองเท้า", a: "ฉลองพระบาท" },
+        { q: "เตียง", a: "พระแท่น" },
+        { q: "ที่นั่ง", a: "พระราชอาสน์" },
+        { q: "รูปถ่าย", a: "พระบรมฉายาพิม" },
+        { q: "บ้าน", a: "พระตำหนัก" },
+        { q: "เงิน", a: "พระราชทรัพย์" },
+        { q: "ป่วย", a: "ทรงพระประชวร" },
+        { q: "หัวเราะ", a: "ทรงพระสรวล" },
+        { q: "เขียน/อ่าน", a: "ทรงพระอักษร" },
+        { q: "แต่งหนังสือ", a: "ทรงพระสวดคำ" },
+        { q: "คำสอน", a: "พระบรมราโชวาท" },
+        { q: "ทักทาย", a: "พระราชปฏิสันถาร" },
+        { q: "คำสั่งสูงสุด", a: "พระราชกฤษฎีกา" },
+        { q: "ชื่อ (เซ็นชื่อ)", a: "พระปรมาภิไธย" }
     ];
 
     var wordsHard = [
-        { q: "ศีรษะ (สูงสุด)", a: "พระเจ้า" }, { q: "ไรผม", a: "พระจุไร" }, { q: "ผม (มุ่นมวย)", a: "พระศก" },
-        { q: "ขนหว่างคิ้ว", a: "พระอุณาโลม" }, { q: "ดวงตา (ลูกตา)", a: "พระจักษุ" }, { q: "ลิ้น", a: "พระชิวหา" },
-        { q: "คาง", a: "พระหนุ" }, { q: "ไหปลาร้า", a: "พระรากขวัญ" }, { q: "บ่า / ไหล่", a: "พระอังสา" },
-        { q: "แขน (ท่อนบน)", a: "พระพาหา" }, { q: "แขน (ท่อนล่าง)", a: "พระกร" }, { q: "ข้อศอก", a: "พระกะชอย" },
-        { q: "นิ้วมือ", a: "พระองคุลี" }, { q: "นิ้วชี้", a: "พระดัชนี" }, { q: "เล็บ", a: "พระนขา" },
-        { q: "เอว", a: "พระกฤษฎี" }, { q: "สีข้าง", a: "พระปรัศว์" }, { q: "หลัง", a: "พระปฤษฎางค์" },
-        { q: "ตะโพก", a: "พระโสณี" }, { q: "กระดูก", a: "พระอัฐิ" }, { q: "เถ้ากระดูก", a: "พระอังคาร" },
-        { q: "น้ำเหลือง", a: "พระบุพโพ" }, { q: "ปอด", a: "พระปับผาสะ" }, { q: "ไต", a: "พระวักกะ" },
-        { q: "ตับ", a: "พระยกนะ" }, { q: "ทวด (ชาย)", a: "พระปัยกา" }, { q: "ทวด (หญิง)", a: "พระปัยยิกา" },
-        { q: "ลูกสะใภ้", a: "พระสุณิสา" }, { q: "ลูกเขย", a: "พระชามาดา" }, { q: "เหลน", a: "พระราชปนัดดา" },
-        { q: "ไม้เท้า", a: "ธารพระกร" }, { q: "หมอน", a: "พระเขนย" }, { q: "ม่าน", a: "พระวิสูตร" },
-        { q: "หน้าต่าง", a: "พระบัญชร" }, { q: "ประตู", a: "พระทวาร" }, { q: "กระจกส่อง", a: "พระฉาย" },
-        { q: "หวี", a: "พระสาง" }, { q: "น้ำดื่ม", a: "พระสุธารส" }, { q: "หมาก", a: "พระศรี" },
-        { q: "เหล้า", a: "น้ำจัณฑ์" }, { q: "ร่ม (ใหญ่)", a: "พระกลด" }, { q: "พรม", a: "ลาดพระบาท" },
-        { q: "ผ้าเช็ดหน้า", a: "ซับพระพักตร์" }, { q: "ผ้านุ่ง", a: "พระภูษา" }, { q: "ร้องไห้", a: "ทรงพระกันแสง" },
-        { q: "ฝัน", a: "ทรงพระสุบิน" }, { q: "อาบน้ำ (พิธีใหญ่)", a: "สรงพระกระยาสนาน" }, { q: "เป็นลม", a: "ประชวรพระวาโย" },
-        { q: "ถ่ายอุจจาระ", a: "พระบังคนหนัก" }, { q: "ถ่ายปัสสาวะ", a: "พระบังคนเบา" }
+        { q: "ศีรษะ (สูงสุด)", a: "พระเจ้า" },
+        { q: "ไรผม", a: "พระจุไร" },
+        { q: "ผม (มุ่นมวย)", a: "พระศก" },
+        { q: "ขนหว่างคิ้ว", a: "พระอุณาโลม" },
+        { q: "ดวงตา (ลูกตา)", a: "พระจักษุ" },
+        { q: "ลิ้น", a: "พระชิวรา" },
+        { q: "คาง", a: "พระหนุ" },
+        { q: "ไหปลาร้า", a: "พระรากขวัญ" },
+        { q: "บ่า / ไหล่", a: "พระอังสา" },
+        { q: "แขน (ท่อนบน)", a: "พระพาหา" },
+        { q: "แขน (ท่อนล่าง)", a: "พระกร" },
+        { q: "ข้อศอก", a: "พระกะชอก" },
+        { q: "นิ้วมือ", a: "พระองคุลี" },
+        { q: "นิ้วชี้", a: "พระดัชนี" },
+        { q: "เล็บ", a: "พระนขา" },
+        { q: "เอว", a: "พระกฤษฎี" },
+        { q: "สีข้าง", a: "พระปรัศว์" },
+        { q: "หลัง", a: "พระปฤษฎางค์" },
+        { q: "ตะโพก", a: "พระโสณี" },
+        { q: "กระดูก", a: "พระอัฐิ" },
+        { q: "เถ้ากระดูก", a: "พระอังคาร" },
+        { q: "น้ำเหลือง", a: "พระบุพโพ" },
+        { q: "ปอด", a: "พระปับผาสะ" },
+        { q: "ไต", a: "พระวักกะ" },
+        { q: "ตับ", a: "พระยกนะ" },
+        { q: "ทวด (ชาย)", a: "พระปัยกา" },
+        { q: "ทวด (หญิง)", a: "พระปัยยิกา" },
+        { q: "ลูกสะใภ้", a: "พระสุณิสา" },
+        { q: "ลูกเขย", a: "พระชามาดา" },
+        { q: "เหลน", a: "พระราชปนัดดา" },
+        { q: "ไม้เท้า", a: "ธารพระกร" },
+        { q: "หมอน", a: "พระเขนย" },
+        { q: "ม่าน", a: "พระวิสูตร" },
+        { q: "หน้าต่าง", a: "พระบัญชร" },
+        { q: "ประตู", a: "พระทวาร" },
+        { q: "กระจกส่อง", a: "พระฉาย" },
+        { q: "หวี", a: "พระสาง" },
+        { q: "น้ำดื่ม", a: "พระสุธารส" },
+        { q: "หมาก", a: "พระศรี" },
+        { q: "เหล้า", a: "น้ำจัณฑ์" }
     ];
 
-    // รวมคำศัพท์แบบที่มือถือทุกรุ่นรองรับ (ใช้ concat แทน ...)
+    // รวมคำศัพท์
     var allWords = wordsEasy.concat(wordsMedium, wordsHard);
 
     // --- 2. ตัวแปรเกม ---
@@ -178,37 +296,35 @@
     var timerInterval = null;
     var playerName = "";
     var canClick = true;
+    var totalQuestions = 0;
+    var correctAnswers = 0;
 
-    // --- 3. ฟังก์ชันหลัก (เพิ่ม Try-Catch ป้องกัน Error) ---
+    // --- 3. ฟังก์ชันหลัก ---
     function tryStartGame(seconds) {
         try {
             startGame(seconds);
         } catch (e) {
             alert("เกิดข้อผิดพลาด: " + e.message);
+            console.error(e);
         }
     }
 
     function startGame(seconds) {
-        // รับชื่อ (ถ้าไม่มีให้ตั้งชื่ออัตโนมัติ)
-        var inputName = document.getElementById("username").value;
-        if (!inputName || inputName == "") {
-            playerName = "ผู้เล่นนิรนาม";
-        } else {
-            playerName = inputName;
-        }
+        var inputName = document.getElementById("username").value.trim();
+        playerName = inputName || "ผู้เล่นนิรนาม";
 
         timer = seconds;
         score = 0;
         canClick = true;
+        totalQuestions = 0;
+        correctAnswers = 0;
         
-        // เลือกความยาก
         var diff = document.getElementById("difficulty-select").value;
-        if (diff === 'easy') currentPool = wordsEasy.slice(); // .slice() เพื่อ copy array
+        if (diff === 'easy') currentPool = wordsEasy.slice();
         else if (diff === 'medium') currentPool = wordsMedium.slice();
         else if (diff === 'hard') currentPool = wordsHard.slice();
         else currentPool = allWords.slice();
 
-        // สลับหน้าจอ
         document.getElementById("start-screen").classList.add("hidden");
         document.getElementById("game-screen").classList.remove("hidden");
         document.getElementById("end-screen").classList.add("hidden");
@@ -216,7 +332,6 @@
         updateDisplay();
         nextQuestion();
 
-        // เริ่มจับเวลา
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(function() {
             timer--;
@@ -230,43 +345,41 @@
     function nextQuestion() {
         canClick = true;
 
-        // ถ้าคำหมดกอง ให้เติมใหม่
         if (currentPool.length === 0) {
-             var diff = document.getElementById("difficulty-select").value;
-             if (diff === 'easy') currentPool = wordsEasy.slice();
-             else if (diff === 'medium') currentPool = wordsMedium.slice();
-             else if (diff === 'hard') currentPool = wordsHard.slice();
-             else currentPool = allWords.slice();
+            var diff = document.getElementById("difficulty-select").value;
+            if (diff === 'easy') currentPool = wordsEasy.slice();
+            else if (diff === 'medium') currentPool = wordsMedium.slice();
+            else if (diff === 'hard') currentPool = wordsHard.slice();
+            else currentPool = allWords.slice();
         }
 
-        // สุ่มคำถามและลบออกจากกอง
         var index = Math.floor(Math.random() * currentPool.length);
         currentQuestion = currentPool.splice(index, 1)[0];
+        totalQuestions++;
 
         document.getElementById("question-text").innerText = currentQuestion.q;
 
-        // สร้างตัวเลือก (1 ถูก + 3 ผิด)
         var options = [currentQuestion.a];
         while (options.length < 4) {
             var randItem = allWords[Math.floor(Math.random() * allWords.length)];
             var randWord = randItem.a;
-            // เช็คไม่ให้ซ้ำ
+            
             var isDuplicate = false;
-            for(var i=0; i<options.length; i++) {
-                if(options[i] === randWord) isDuplicate = true;
+            for(var i = 0; i < options.length; i++) {
+                if(options[i] === randWord) {
+                    isDuplicate = true;
+                    break;
+                }
             }
             if (!isDuplicate) options.push(randWord);
         }
         
-        // สลับตัวเลือก
         options.sort(function() { return 0.5 - Math.random(); });
 
-        // สร้างปุ่ม
         var html = "";
         for (var i = 0; i < options.length; i++) {
             var w = options[i];
-            // ใช้ onclick ธรรมดาที่เสถียรที่สุด
-            html += '<div class="option-btn" onclick="checkAnswer(this, \'' + w + '\')">' + w + '</div>';
+            html += '<div class="option-btn" onclick="checkAnswer(this, \'' + w.replace(/'/g, "\\'") + '\')">' + w + '</div>';
         }
         document.getElementById("options-area").innerHTML = html;
     }
@@ -275,16 +388,21 @@
         if (!canClick) return;
         canClick = false;
 
+        var allBtns = document.getElementsByClassName("option-btn");
+        for(var i = 0; i < allBtns.length; i++) {
+            allBtns[i].classList.add("disabled");
+        }
+
         if (ans === currentQuestion.a) {
             btn.classList.add("correct");
             score += 10;
+            correctAnswers++;
         } else {
             btn.classList.add("wrong");
-            // เฉลย
-            var allBtns = document.getElementsByClassName("option-btn");
-            for(var i=0; i<allBtns.length; i++) {
+            for(var i = 0; i < allBtns.length; i++) {
                 if(allBtns[i].innerText === currentQuestion.a) {
                     allBtns[i].classList.add("correct");
+                    break;
                 }
             }
             if(score > 0) score -= 5;
@@ -293,7 +411,7 @@
 
         setTimeout(function() {
             if (timer > 0) nextQuestion();
-        }, 800);
+        }, 1000);
     }
 
     function updateDisplay() {
@@ -309,7 +427,6 @@
         document.getElementById("final-score").innerText = score;
         document.getElementById("final-name").innerText = playerName;
 
-        // คำนวณยศ
         var rank = "ชาวบ้านทั่วไป";
         if (score >= 50) rank = "มหาดเล็กฝึกหัด";
         if (score >= 100) rank = "มหาดเล็กหุ้มแพร";
@@ -317,6 +434,8 @@
         if (score >= 300) rank = "พระยา";
         if (score >= 400) rank = "เจ้าพระยา";
         if (score >= 500) rank = "สมเด็จเจ้าพระยา";
+        if (score >= 700) rank = "พระราชาธิราช";
+        
         document.getElementById("final-rank").innerText = rank;
 
         saveScore();
@@ -328,11 +447,14 @@
         var oldData = localStorage.getItem("royalGameFinal");
         var history = oldData ? JSON.parse(oldData) : [];
         
-        history.push({ name: playerName, score: score });
-        // เรียงคะแนนมากไปน้อย
+        history.push({ 
+            name: playerName, 
+            score: score,
+            date: new Date().toLocaleDateString('th-TH')
+        });
+        
         history.sort(function(a, b) { return b.score - a.score; });
-        // เก็บแค่ 5 อันดับ
-        history = history.slice(0, 5);
+        history = history.slice(0, 10);
         
         localStorage.setItem("royalGameFinal", JSON.stringify(history));
     }
@@ -343,11 +465,12 @@
         var html = "";
         
         if(history.length === 0) {
-            html = "<tr><td colspan='2' style='text-align:center'>ไม่มีสถิติ</td></tr>";
+            html = "<tr><td colspan='2' style='text-align:center;'>ไม่มีสถิติ</td></tr>";
         } else {
-            for(var i=0; i<history.length; i++) {
-                var medal = (i===0) ? "🥇" : (i===1 ? "🥈" : (i===2 ? "🥉" : (i+1)));
-                html += "<tr><td>" + medal + " " + history[i].name + "</td><td><b>" + history[i].score + "</b></td></tr>";
+            var medals = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
+            for(var i = 0; i < history.length; i++) {
+                var medal = medals[i] || (i + 1);
+                html += "<tr><td><span class='medal'>" + medal + "</span> " + history[i].name + "</td><td><strong>" + history[i].score + "</strong></td></tr>";
             }
         }
         document.getElementById("leaderboard-table").innerHTML = html;
@@ -359,9 +482,6 @@
             renderLeaderboard();
         }
     }
-    
-    // โหลดตารางคะแนนตอนเปิด
-    // renderLeaderboard();
 </script>
 
 </body>
